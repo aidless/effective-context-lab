@@ -1,0 +1,190 @@
+{
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "claimed_context": 1000000,
+  "config": {
+    "seq_lens": [
+      8192,
+      32768,
+      65536,
+      131072
+    ],
+    "position_fracs": [
+      0.1,
+      0.25,
+      0.5,
+      0.75,
+      0.9
+    ],
+    "densities": [
+      1.0
+    ],
+    "task": "single_needle",
+    "repeats": 1,
+    "threshold": 0.856,
+    "seed": 7
+  },
+  "cells": [
+    {
+      "seq_len": 8192,
+      "position_frac": 0.1,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 3696.7501640319824
+    },
+    {
+      "seq_len": 8192,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 1606.2922477722168
+    },
+    {
+      "seq_len": 8192,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 4179.161071777344
+    },
+    {
+      "seq_len": 8192,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 2924.1626262664795
+    },
+    {
+      "seq_len": 8192,
+      "position_frac": 0.9,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 3461.272954940796
+    },
+    {
+      "seq_len": 32768,
+      "position_frac": 0.1,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 3891.826868057251
+    },
+    {
+      "seq_len": 32768,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 1,
+      "avg_latency_ms": 9464.643478393555
+    },
+    {
+      "seq_len": 32768,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 1568.5865879058838
+    },
+    {
+      "seq_len": 32768,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 2962.6786708831787
+    },
+    {
+      "seq_len": 32768,
+      "position_frac": 0.9,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 3891.3989067077637
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.1,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 1,
+      "avg_latency_ms": 5058.349609375
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 4530.066967010498
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 1,
+      "avg_latency_ms": 4726.994752883911
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 1,
+      "avg_latency_ms": 10852.450370788574
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.9,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 1,
+      "avg_latency_ms": 5278.982877731323
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.1,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 1,
+      "avg_latency_ms": 6572.983264923096
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 6351.778984069824
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 6329.1425704956055
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 5997.66731262207
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.9,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 1,
+      "avg_latency_ms": 7225.5237102508545
+    }
+  ],
+  "started_at": 1793583735.8404374,
+  "finished_at": 1793583836.6177614
+}

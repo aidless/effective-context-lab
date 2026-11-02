@@ -1,0 +1,166 @@
+{
+  "model": "nvidia/deepseek-ai/deepseek-v4.1-flash",
+  "results": [
+    {
+      "seq_len": 65536,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 65373,
+      "latency_ms": 64419.145345687866
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 65373,
+      "latency_ms": 32838.9151096344
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 65373,
+      "latency_ms": 36904.15287017822
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 65373,
+      "latency_ms": 37406.55589103699
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 65373,
+      "latency_ms": 35323.068380355835
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 261253,
+      "latency_ms": 41901.389598846436
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 261253,
+      "latency_ms": 45213.871717453
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 261253,
+      "latency_ms": 32056.488513946533
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 261253,
+      "latency_ms": 17487.03408241272
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 261253,
+      "latency_ms": 10238.57069015503
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 522417,
+      "latency_ms": 38462.88537979126
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 522417,
+      "latency_ms": 33444.26155090332
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 522417,
+      "latency_ms": 56183.480739593506
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 522417,
+      "latency_ms": 109508.07428359985
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 522417,
+      "latency_ms": 34645.15948295593
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 996364,
+      "latency_ms": 94399.30057525635
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 996364,
+      "latency_ms": 131602.36930847168
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 996364,
+      "latency_ms": 235302.17218399048
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 996364,
+      "latency_ms": 105724.7474193573
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "420",
+      "prompt_tokens": 996364,
+      "latency_ms": 117427.7012348175
+    }
+  ],
+  "generated_at": "20261101-222254"
+}

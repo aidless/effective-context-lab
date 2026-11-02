@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Effective Context Utilization of DeepSeek V4.1 Flash</title>
+<style>
+body { font-family: 'Georgia', 'Times New Roman', serif; max-width: 900px; margin: 40px auto; padding: 0 20px; line-height: 1.6; color: #222; }
+h1 { font-size: 1.6em; text-align: center; margin-bottom: 0.3em; }
+h2 { font-size: 1.3em; border-bottom: 1px solid #ccc; padding-bottom: 0.3em; margin-top: 1.5em; }
+h3 { font-size: 1.1em; }
+table { border-collapse: collapse; width: 100%; margin: 1em 0; font-size: 0.9em; }
+th, td { border: 1px solid #999; padding: 6px 10px; text-align: left; }
+th { background: #f0f0f0; }
+code { background: #f5f5f5; padding: 2px 4px; border-radius: 3px; }
+pre { background: #f5f5f5; padding: 10px; border-radius: 4px; overflow-x: auto; }
+blockquote { border-left: 3px solid #ccc; margin-left: 0; padding-left: 15px; color: #555; }
+</style>
+</head>
+<body>
+<h1>Measuring Real Long-Context Utilization: A Probe-Based Evaluation of DeepSeek V4.1 Flash Across Six RULER Task Types at One Million Tokens</h1>
+<p><strong>Author</strong>: Independent Researcher (aidless)</p>
+<p><strong>Date</strong>: 2026-11-02</p>
+<hr />
+<h2>Abstract</h2>
+<p>Long-context language models advertise context windows of up to one million tokens. Yet their <em>effective</em> usable context often falls far short of the advertised size. Prior benchmarks (RULER, BABILong, ∞Bench) showed that most models utilize only 10-20% of their advertised context on reasoning tasks.</p>
+<p>We measure the effective context utilization of DeepSeek V4.1 Flash (a state-of-the-art reasoning model). We use controlled Needle-In-A-Haystack (NIAH) probes across all six RULER task types, at varying lengths (65K to 1M tokens) and positions (0.0 to 1.0).</p>
+<p>Contrary to the decay pattern in prior benchmarks, DeepSeek V4.1 Flash maintains perfect accuracy (100%) across all six task types and all positions within its advertised 1M-token window. The true context reaches 996K tokens (99.6% of advertised).</p>
+<p>This challenges the widely-reported "context decay" pattern. It suggests that frontier reasoning models may have substantially higher effective context utilization than earlier models. We discuss three methodological implications: proper output budget for reasoning models (max_tokens), accurate context-length accounting via prompt_tokens, and the importance of measuring task complexity beyond simple retrieval.</p>
+<hr />
+<h2>1. Introduction</h2>
+<p>Long-context language models have expanded from 4K to 1M+ tokens over recent years. However, a growing body of research (RULER, BABILong, ∞Bench, Logic Haystacks) suggests that the <em>effective</em> usable context is much smaller than the advertised window. RULER (Hsieh et al., 2024) found that among models claiming ≥32K context, only about half maintain satisfactory performance at 32K. BABILong (Kuratov et al., 2024) showed that popular LLMs effectively utilize only 10-20% of their context, with performance declining sharply as reasoning complexity increases. Logic Haystacks (Sileo, 2026) found that with realistic distractors, effective context crumbles at just 128 clauses.</p>
+<p>These findings suggest a "window size ≠ usable window" problem. However, most prior benchmarks have focused on open-source model weights and simple retrieval tasks. In this work, we ask a complementary question: <strong>How large is the effective context of a frontier reasoning model when measured across the full spectrum of task complexity?</strong></p>
+<p>We answer this question for DeepSeek V4.1 Flash (accessed via the Magpie gateway), using:
+1. All <strong>six RULER task types</strong> (single-needle, multi-needle, multi-choice, variable tracking, aggregation, multi-doc QA), spanning simple retrieval to cross-context reasoning.
+2. Controlled <strong>position sweep</strong> (0.0, 0.25, 0.5, 0.75, 1.0) at each length.
+3. Accurate <strong>context-length accounting</strong> via <code>prompt_tokens</code> (not whitespace-based tokenization).
+4. Proper <strong>output budget</strong> for reasoning models (<code>max_tokens=300</code>, not 32).</p>
+<hr />
+<h2>2. Related Work</h2>
+<h3>2.1 First Generation: Synthetic Retrieval Benchmarks</h3>
+<p><strong>NIAH</strong> (Needle-In-A-Haystack) is the canonical synthetic benchmark, embedding a "needle" (a fact) into a "haystack" (irrelevant text) and asking the model to retrieve it.</p>
+<p><strong>RULER</strong> (Hsieh et al., 2024, arXiv:2404.06654, COLM 2024) extends NIAH to 13 tasks across 17 models, including multi-needle retrieval, variable tracking, aggregation, and multi-doc QA. Key finding: models claiming ≥32K context, only about half maintain satisfactory performance.</p>
+<p><strong>BABILong</strong> (Kuratov et al., 2024, arXiv:2406.10149, NeurIPS 2024) introduces 20 reasoning tasks in extremely long documents. Key finding: popular LLMs effectively utilize only 10-20% of context, with performance declining sharply with reasoning complexity.</p>
+<p><strong>∞Bench</strong> (Zhang et al., 2024, arXiv:2402.13718, ACL 2024) extends evaluation beyond 100K tokens.</p>
+<h3>2.2 Second Generation: Realistic Task Benchmarks</h3>
+<p><strong>LongBench v1</strong> (Bai et al., 2024, arXiv:2308.14508, ACL 2024) is a bilingual multitask benchmark. <strong>LongBench v2</strong> (Bai et al., 2025, arXiv:2412.15204, ACL 2025) extends to 503 multiple-choice questions for deeper understanding. <strong>LongBench Pro</strong> (arXiv:2601.02872) provides a more realistic bilingual evaluation.</p>
+<h3>2.3 Third Generation: Validity Critiques</h3>
+<p><strong>100-LongBench</strong> (arXiv:2505.19293, ACL Findings 2025) questions whether de facto long-context benchmarks actually evaluate long-context capability. <strong>Logic Haystacks</strong> (Sileo, 2026, arXiv:2502.17169, EACL 2026) shows effective context crumbles at 128 clauses with realistic distractors. <strong>Hidden in the Haystack</strong> (Bianchi et al., 2025, arXiv:2505.18148) shows smaller gold contexts degrade performance.</p>
+<h3>2.4 Our Contribution</h3>
+<p>Prior work focuses on open-source weights and simple retrieval. We measure a <strong>frontier reasoning model via API gateway</strong>, across <strong>all six RULER task types</strong>, with accurate context accounting and proper output budget. Our result (perfect performance at 1M) contrasts with the decay pattern in prior benchmarks.</p>
+<hr />
+<h2>3. Method</h2>
+<h3>3.1 Model</h3>
+<p><strong>DeepSeek V4.1 Flash</strong> accessed via the Magpie gateway (<code>opencode-go/deepseek-v4.1-flash</code>, context window 1,000,000 tokens, max output 384K). A second provider route (<code>nvidia/deepseek-ai/deepseek-v4.1-flash</code>) was used for the same model (same DeepSeek V4.1 Flash weights, different provider) to complete the aggregation and multi-doc QA runs.</p>
+<h3>3.2 Probe Design (NIAH)</h3>
+<p>We generate synthetic contexts of target length, embedding a "needle" at a controlled position fraction. Six task types:</p>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Description</th>
+<th>Complexity</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single-Needle NIAH</td>
+<td>Retrieve a single fact from haystack</td>
+<td>Retrieval (simplest)</td>
+</tr>
+<tr>
+<td>Multi-Needle (2)</td>
+<td>Retrieve 2 needles simultaneously</td>
+<td>Retrieval</td>
+</tr>
+<tr>
+<td>Multi-Choice</td>
+<td>Choose from embedded options</td>
+<td>Retrieval + selection</td>
+</tr>
+<tr>
+<td>Variable Tracking</td>
+<td>Track variable with timestamps (t=1,2,3), answer t=3 value</td>
+<td>Cross-context reasoning</td>
+</tr>
+<tr>
+<td>Aggregation</td>
+<td>Sum values of 8 scattered items</td>
+<td>Cross-context reasoning</td>
+</tr>
+<tr>
+<td>Multi-doc QA</td>
+<td>Extract fact from document 8 of 8</td>
+<td>Cross-document retrieval</td>
+</tr>
+</tbody>
+</table>
+<h3>3.3 Length and Position Sweep</h3>
+<ul>
+<li><strong>Lengths</strong>: 65,536 / 262,144 / 524,288 / 1,000,000 tokens (and 4,096 for single-needle/multi-choice/variable-tracking).</li>
+<li><strong>Positions</strong>: 0.0 (first) / 0.25 / 0.5 (middle) / 0.75 / 1.0 (last).</li>
+<li>Each cell tested once (n=1 per cell for complex tasks; n=2 for single-needle in the base matrix).</li>
+</ul>
+<h3>3.4 Critical Methodological Fixes</h3>
+<ol>
+<li><strong><code>max_tokens=300</code> (not 32)</strong>: DeepSeek V4.1 Flash is a reasoning model. With <code>max_tokens=32</code>, the reasoning tokens consume the entire budget, leaving content empty (a measurement artifact). We use <code>max_tokens=300</code>.</li>
+<li><strong>Context length via <code>prompt_tokens</code></strong>: We use the API-reported <code>prompt_tokens</code> for context length, not whitespace-based tokenization (which underestimates by ~1.26× due to tokenizer expansion). A 1M-token probe reaches <code>prompt_tokens=996,354</code> (99.6% of advertised).</li>
+</ol>
+<hr />
+<h2>4. Results</h2>
+<h3>4.1 Context Length Verification</h3>
+<table>
+<thead>
+<tr>
+<th>Target seq_len</th>
+<th>Actual prompt_tokens</th>
+<th>Ratio</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65,536</td>
+<td>65,363-65,515</td>
+<td>~0.998</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>261,228-261,380</td>
+<td>~0.996</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>522,406-522,559</td>
+<td>~0.996</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>996,353-996,506</td>
+<td>~0.996</td>
+</tr>
+</tbody>
+</table>
+<p>The advertised 1M window is reached at 99.6% (996K tokens), confirming the model truly processes near-1M context.</p>
+<h3>4.2 Accuracy Across All Six Task Types</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Lengths tested</th>
+<th>Positions</th>
+<th>Accuracy</th>
+<th>Cells</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single-Needle NIAH</td>
+<td>4K-1M</td>
+<td>0.0-1.0</td>
+<td><strong>1.00</strong></td>
+<td>25/25</td>
+</tr>
+<tr>
+<td>Multi-Needle (2)</td>
+<td>65K-1M</td>
+<td>0.0-1.0</td>
+<td><strong>1.00</strong></td>
+<td>20/20</td>
+</tr>
+<tr>
+<td>Multi-Choice</td>
+<td>4K-1M</td>
+<td>0.0-1.0</td>
+<td><strong>1.00</strong></td>
+<td>25/25</td>
+</tr>
+<tr>
+<td>Variable Tracking</td>
+<td>4K-1M</td>
+<td>0.0-1.0</td>
+<td><strong>1.00</strong></td>
+<td>25/25</td>
+</tr>
+<tr>
+<td>Aggregation</td>
+<td>65K-1M</td>
+<td>0.0-1.0</td>
+<td><strong>1.00</strong></td>
+<td>20/20</td>
+</tr>
+<tr>
+<td>Multi-doc QA</td>
+<td>65K-1M</td>
+<td>0.0-1.0</td>
+<td><strong>1.00</strong></td>
+<td>20/20</td>
+</tr>
+</tbody>
+</table>
+<p><strong>All 6 task types achieve 100% accuracy at all positions within the advertised 1M window.</strong> No effective-context decay is observed.</p>
+<h3>4.3 Detailed Matrices</h3>
+<p><strong>Single-Needle NIAH (25 cells, all 1.00):</strong></p>
+<table>
+<thead>
+<tr>
+<th>seq_len</th>
+<th>0.0</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>0.75</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4,096</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>65,536</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Multi-doc QA (20 cells, all 1.00):</strong></p>
+<table>
+<thead>
+<tr>
+<th>seq_len</th>
+<th>0.0</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>0.75</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65,536</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<p>(Full matrices for all tasks in Appendix A.)</p>
+<h3>4.4 Latency</h3>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>1M latency avg</th>
+<th>Range</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Single-Needle</td>
+<td>32.4s</td>
+<td>22-55s</td>
+</tr>
+<tr>
+<td>Aggregation</td>
+<td>65.5s</td>
+<td>10-235s</td>
+</tr>
+<tr>
+<td>Multi-doc QA</td>
+<td>74.6s</td>
+<td>21-178s</td>
+</tr>
+</tbody>
+</table>
+<p>Latency grows with context length, consistent with attention cost. But accuracy remains 1.00.</p>
+<hr />
+<h2>5. Discussion</h2>
+<h3>5.1 Contrast with Prior Benchmarks</h3>
+<table>
+<thead>
+<tr>
+<th>Source</th>
+<th>Claimed Window</th>
+<th>Measured</th>
+<th>Conclusion</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>RULER (2024)</td>
+<td>≥32K</td>
+<td>~half models</td>
+<td>Context &lt; claimed</td>
+</tr>
+<tr>
+<td>BABILong (2024)</td>
+<td>—</td>
+<td>10-20% utilization</td>
+<td>Sharp decay with complexity</td>
+</tr>
+<tr>
+<td>Logic Haystacks (2026)</td>
+<td>—</td>
+<td>crumbles at 128 clauses</td>
+<td>Realistic distractors hurt</td>
+</tr>
+<tr>
+<td><strong>Ours (2026)</strong></td>
+<td><strong>1M</strong></td>
+<td><strong>996K, 100% accuracy</strong></td>
+<td><strong>No decay observed</strong></td>
+</tr>
+</tbody>
+</table>
+<h3>5.2 Why the Difference?</h3>
+<ol>
+<li><strong>Model</strong>: DeepSeek V4.1 Flash is a frontier reasoning model, possibly among the strongest for long context. Prior benchmarks tested models available at their time (GPT-3.5, LLaMA 2, etc.), which are weaker.</li>
+<li><strong>Task complexity</strong>: We test all six RULER task types including cross-context reasoning (aggregation, multi-doc QA). The model handles all at 1M.</li>
+<li><strong>Methodological rigor</strong>: We fix <code>max_tokens</code> (32→300) and use <code>prompt_tokens</code> for context length. Prior benchmarks may have underestimated performance due to these artifacts.</li>
+</ol>
+<h3>5.3 Limitations</h3>
+<ol>
+<li><strong>Single provider route</strong>: We used two provider routes for the same model (same weights). Cross-provider consistency not fully tested.</li>
+<li><strong>n=1 for complex tasks</strong>: Each cell tested once. Repeats would strengthen confidence.</li>
+<li><strong>No &gt;1M testing</strong>: The advertised window is the ceiling. The model may sustain beyond 1M (untested).</li>
+<li><strong>Synthetic context</strong>: NIAH uses synthetic haystacks. Real-world context (code, documents) may behave differently (cf. Logic Haystacks).</li>
+<li><strong>API gateway</strong>: The Magpie gateway may add noise, though prompt_tokens confirms near-1M processing.</li>
+</ol>
+<hr />
+<h2>6. Conclusion</h2>
+<p>We measured the effective context utilization of DeepSeek V4.1 Flash across all six RULER task types at up to 1M tokens. Contrary to the decay pattern reported in prior benchmarks, <strong>the model maintains perfect accuracy (100%) across all task types and positions within its advertised 1M window</strong>, with true context reaching 996K tokens. This suggests that frontier reasoning models may have substantially higher effective context utilization than earlier models, and that careful methodology (proper output budget, accurate token accounting, full task-complexity spectrum) is essential for valid long-context evaluation.</p>
+<hr />
+<h2>References</h2>
+<ol>
+<li>Hsieh et al. (2024). RULER: What is the Real Context Size of Your Long-Context Language Models? arXiv:2404.06654. COLM 2024.</li>
+<li>Kuratov et al. (2024). BABILong: Testing the Limits of LLMs with Long Context Reasoning-in-a-Haystack. arXiv:2406.10149. NeurIPS 2024.</li>
+<li>Zhang et al. (2024). ∞Bench: Extending Long Context Evaluation Beyond 100K Tokens. arXiv:2402.13718. ACL 2024.</li>
+<li>Bai et al. (2024). LongBench: A Bilingual, Multitask Benchmark for Long Context Understanding. arXiv:2308.14508. ACL 2024.</li>
+<li>Bai et al. (2025). LongBench v2: Towards Deeper Understanding and Reasoning on Realistic Long-Context. arXiv:2412.15204. ACL 2025.</li>
+<li>(2025). 100-LongBench: Are de facto Long-Context Benchmarks Literally Evaluating Long-Context? arXiv:2505.19293. ACL Findings 2025.</li>
+<li>(2026). LongBench Pro: A More Realistic and Comprehensive Bilingual Long-Context Benchmark. arXiv:2601.02872.</li>
+<li>Sileo (2026). Logic Haystacks: Probing LLMs' Long-Context Logical Reasoning (Without Easily Identifiable Unrelated Padding). arXiv:2502.17169. EACL 2026.</li>
+<li>Fraga (2024). Challenging LLMs Beyond Information Retrieval: Reasoning Degradation with Long Context Windows. Preprints 10.20944/preprints202408.1527.v1.</li>
+<li>Bianchi et al. (2025). Hidden in the Haystack: Smaller Needles are More Difficult for LLMs to Find. arXiv:2505.18148.</li>
+</ol>
+<hr />
+<h2>Appendix A: Full Accuracy Matrices</h2>
+<h3>A.1 Multi-Needle (2) — 20 cells, all 1.00</h3>
+<table>
+<thead>
+<tr>
+<th>seq_len</th>
+<th>0.0</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>0.75</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65,536</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<h3>A.2 Multi-Choice — 25 cells, all 1.00</h3>
+<table>
+<thead>
+<tr>
+<th>seq_len</th>
+<th>0.0</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>0.75</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4,096</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>65,536</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<h3>A.3 Variable Tracking — 25 cells, all 1.00</h3>
+<table>
+<thead>
+<tr>
+<th>seq_len</th>
+<th>0.0</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>0.75</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4,096</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>65,536</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<h3>A.4 Aggregation — 20 cells, all 1.00</h3>
+<table>
+<thead>
+<tr>
+<th>seq_len</th>
+<th>0.0</th>
+<th>0.25</th>
+<th>0.5</th>
+<th>0.75</th>
+<th>1.0</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>65,536</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>262,144</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>524,288</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+<tr>
+<td>1,000,000</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+<td>1.00</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<p><em>Data available at: <code>data/</code> (13 JSON files). Reproduce via: <code>python3 scripts/run_benchmark.py --task &lt;task&gt; --model &lt;model&gt; --max-tokens 300</code>.</em></p>
+</body>
+</html>

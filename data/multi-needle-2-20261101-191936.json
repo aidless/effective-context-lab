@@ -1,0 +1,166 @@
+{
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "results": [
+    {
+      "seq_len": 65536,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 65363,
+      "latency_ms": 2343.714475631714
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 65363,
+      "latency_ms": 3182.4634075164795
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 65363,
+      "latency_ms": 3078.660011291504
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 65363,
+      "latency_ms": 3304.0871620178223
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 65363,
+      "latency_ms": 3139.232873916626
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 261228,
+      "latency_ms": 5067.593574523926
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 261228,
+      "latency_ms": 4853.951454162598
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 261228,
+      "latency_ms": 2851.675271987915
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 261228,
+      "latency_ms": 3045.579433441162
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 261228,
+      "latency_ms": 2825.7999420166016
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 522406,
+      "latency_ms": 5936.452150344849
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 522406,
+      "latency_ms": 11124.79305267334
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 522406,
+      "latency_ms": 23309.878826141357
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 522406,
+      "latency_ms": 3867.9003715515137
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 522406,
+      "latency_ms": 5870.673894882202
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 996353,
+      "latency_ms": 8697.770595550537
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.25,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 996353,
+      "latency_ms": 34034.568548202515
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 996353,
+      "latency_ms": 9522.31740951538
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 996353,
+      "latency_ms": 8792.317152023315
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "Paris",
+      "prompt_tokens": 996353,
+      "latency_ms": 8549.910306930542
+    }
+  ],
+  "generated_at": "20261101-191936"
+}

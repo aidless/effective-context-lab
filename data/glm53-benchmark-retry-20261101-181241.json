@@ -1,0 +1,190 @@
+{
+  "model": "volcengine/glm-5.3-flash",
+  "claimed_context": 1000000,
+  "config": {
+    "seq_lens": [
+      4096,
+      16384,
+      65536,
+      131072
+    ],
+    "position_fracs": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "densities": [
+      1.0
+    ],
+    "task": "single_needle",
+    "repeats": 2,
+    "threshold": 0.856,
+    "seed": 7
+  },
+  "cells": [
+    {
+      "seq_len": 4096,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1677.1926879882812
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1385.6381177902222
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1489.6907806396484
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 1331.4247131347656
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2450.0139951705933
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1705.4128646850586
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 1693.8894987106323
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1411.2565517425537
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5134.82654094696
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 7020.818829536438
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 1690.4966831207275
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2534.3642234802246
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2231.213092803955
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1797.21200466156
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1717.0418500900269
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2530.632972717285
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2518.2446241378784
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5246.473908424377
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2291.922092437744
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2359.71200466156
+    }
+  ],
+  "started_at": 1793585461.0866027,
+  "finished_at": 1793585561.9379108
+}

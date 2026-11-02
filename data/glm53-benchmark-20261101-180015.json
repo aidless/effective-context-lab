@@ -1,0 +1,190 @@
+{
+  "model": "volcengine/glm-5.3-flash",
+  "claimed_context": 1000000,
+  "config": {
+    "seq_lens": [
+      4096,
+      16384,
+      65536,
+      131072
+    ],
+    "position_fracs": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "densities": [
+      1.0
+    ],
+    "task": "single_needle",
+    "repeats": 2,
+    "threshold": 0.856,
+    "seed": 7
+  },
+  "cells": [
+    {
+      "seq_len": 4096,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1486.891508102417
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 1620.7140684127808
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 1656.7068099975586
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 4519.346833229065
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 2485.8176708221436
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 2136.5833282470703
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 3598.1746912002563
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 2931.729555130005
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 3626.664638519287
+    },
+    {
+      "seq_len": 16384,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 3559.40842628479
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5700.661182403564
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5026.917099952698
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5282.728433609009
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5646.306753158569
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 5741.198182106018
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 12623.025178909302
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 8515.188813209534
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 14676.230311393738
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 0.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5964.902997016907
+    },
+    {
+      "seq_len": 131072,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 0.5,
+      "n_cases": 2,
+      "avg_latency_ms": 7500.939607620239
+    }
+  ],
+  "started_at": 1793584606.3540783,
+  "finished_at": 1793584815.40061
+}

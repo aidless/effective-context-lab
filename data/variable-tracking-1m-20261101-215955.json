@@ -1,0 +1,30 @@
+{
+  "model": "nvidia/deepseek-ai/deepseek-v4.1-flash",
+  "results": [
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.5,
+      "score": 1.0,
+      "prediction": "468",
+      "prompt_tokens": 996419,
+      "latency_ms": 133343.58096122742
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.75,
+      "score": 1.0,
+      "prediction": "468",
+      "prompt_tokens": 996419,
+      "latency_ms": 125655.0064086914
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 1.0,
+      "score": 1.0,
+      "prediction": "468",
+      "prompt_tokens": 996419,
+      "latency_ms": 174122.36523628235
+    }
+  ],
+  "generated_at": "20261101-215955"
+}

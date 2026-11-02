@@ -1,0 +1,231 @@
+{
+  "model": "opencode-go/deepseek-v4.1-flash",
+  "claimed_context": 1000000,
+  "config": {
+    "seq_lens": [
+      4096,
+      65536,
+      262144,
+      524288,
+      1000000
+    ],
+    "position_fracs": [
+      0.0,
+      0.25,
+      0.5,
+      0.75,
+      1.0
+    ],
+    "densities": [
+      1.0
+    ],
+    "task": "single_needle",
+    "repeats": 2,
+    "threshold": 0.856,
+    "seed": 7
+  },
+  "cells": [
+    {
+      "seq_len": 4096,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2400.345802307129
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1558.4609508514404
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 17373.058676719666
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 2037.0978116989136
+    },
+    {
+      "seq_len": 4096,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 1169.57688331604
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 3962.8069400787354
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 5101.112127304077
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 3771.723747253418
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 3671.674370765686
+    },
+    {
+      "seq_len": 65536,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 3290.93337059021
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 10908.585786819458
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 7872.25604057312
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 6640.929818153381
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 9156.656265258789
+    },
+    {
+      "seq_len": 262144,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 6650.505781173706
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 19587.17942237854
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 33676.51128768921
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 16305.988550186157
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 18413.95080089569
+    },
+    {
+      "seq_len": 524288,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 14658.47098827362
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 26485.390663146973
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.25,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 25956.759572029114
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.5,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 32547.404766082764
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 0.75,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 22194.018602371216
+    },
+    {
+      "seq_len": 1000000,
+      "position_frac": 1.0,
+      "density": 1.0,
+      "accuracy": 1.0,
+      "n_cases": 2,
+      "avg_latency_ms": 54961.30311489105
+    }
+  ],
+  "started_at": 1793587419.2067769,
+  "finished_at": 1793588123.3443298
+}
