@@ -4,6 +4,11 @@
 
 **Date**: 2026-11-02
 
+> **Provenance note (2026-11-09). STATUS: WORK-IN-PROGRESS — not A yet.**
+> Accuracy figures in this paper are an OBSERVED transcription of stored `score` / `accuracy` fields. They were not rescored: the JSON does not contain expected answers. Result-schema files were not produced by the runner currently in the repo.
+> Variable tracking is split across `opencode-go/deepseek-v4.1-flash` (22 rows, every `latency_ms` is 0) and `nvidia/deepseek-ai/deepseek-v4.1-flash` (3 rows). Aggregation and multi-doc QA use the nvidia model id. This is one checkpoint, not a ranking.
+> `prompt_tokens` on `data/1m-full-matrix-20261101-185523.json` is UNKNOWN. Results-schema rows at seq_len=1000000 span 996353–996506. `paper/main.pdf` is an earlier compile and was not regenerated with this note. The checked tally is the README claims block.
+
 ---
 
 ## Abstract
@@ -12,7 +17,7 @@ Long-context language models advertise context windows of up to one million toke
 
 We measure the effective context utilization of DeepSeek V4.1 Flash (a state-of-the-art reasoning model). We use controlled Needle-In-A-Haystack (NIAH) probes across all six RULER task types, at varying lengths (65K to 1M tokens) and positions (0.0 to 1.0).
 
-Contrary to the decay pattern in prior benchmarks, DeepSeek V4.1 Flash maintains perfect accuracy (100%) across all six task types and all positions within its advertised 1M-token window. The true context reaches 996K tokens (99.6% of advertised).
+On the committed JSON, stored scores are 1.0 across the six task grids that were saved. That is one checkpoint's stored scores, not a rescore and not a ranking of frontier models. Where result files store `prompt_tokens`, the 1M rows span 996353–996506. The single-needle matrix does not store `prompt_tokens` (UNKNOWN).
 
 This challenges the widely-reported "context decay" pattern. It suggests that frontier reasoning models may have substantially higher effective context utilization than earlier models. We discuss three methodological implications: proper output budget for reasoning models (max_tokens), accurate context-length accounting via prompt_tokens, and the importance of measuring task complexity beyond simple retrieval.
 
@@ -86,7 +91,7 @@ We generate synthetic contexts of target length, embedding a "needle" at a contr
 ### 3.4 Critical Methodological Fixes
 
 1. **`max_tokens=300` (not 32)**: DeepSeek V4.1 Flash is a reasoning model. With `max_tokens=32`, the reasoning tokens consume the entire budget, leaving content empty (a measurement artifact). We use `max_tokens=300`.
-2. **Context length via `prompt_tokens`**: We use the API-reported `prompt_tokens` for context length, not whitespace-based tokenization (which underestimates by ~1.26× due to tokenizer expansion). A 1M-token probe reaches `prompt_tokens=996,354` (99.6% of advertised).
+2. **Context length via `prompt_tokens`**: When the JSON stores `prompt_tokens`, that field is the API usage count. Whitespace length is not a substitute. The generator divides the target by the code constant 1.26. Results-schema files at seq_len=1000000 span `prompt_tokens` 996353–996506. The single-needle matrix file does not store the field (UNKNOWN).
 
 ---
 
@@ -101,7 +106,7 @@ We generate synthetic contexts of target length, embedding a "needle" at a contr
 | 524,288 | 522,406-522,559 | ~0.996 |
 | 1,000,000 | 996,353-996,506 | ~0.996 |
 
-The advertised 1M window is reached at 99.6% (996K tokens), confirming the model truly processes near-1M context.
+OBSERVED from results-schema files only (the single-needle matrix has no `prompt_tokens`). At seq_len=1000000 those files span 996353–996506. That span is not a rescore and does not show that the model read the needle.
 
 ### 4.2 Accuracy Across All Six Task Types
 
@@ -114,7 +119,7 @@ The advertised 1M window is reached at 99.6% (996K tokens), confirming the model
 | Aggregation | 65K-1M | 0.0-1.0 | **1.00** | 20/20 |
 | Multi-doc QA | 65K-1M | 0.0-1.0 | **1.00** | 20/20 |
 
-**All 6 task types achieve 100% accuracy at all positions within the advertised 1M window.** No effective-context decay is observed.
+**Stored scores on these grids are 1.0.** Variable tracking's 25/25 is a union of two model ids (22 + 3), not one endpoint. No cell in these grids is below the 0.856 threshold, so the files do not locate a decay boundary. This was not rescored.
 
 ### 4.3 Detailed Matrices
 
@@ -160,13 +165,13 @@ Latency grows with context length, consistent with attention cost. But accuracy 
 | RULER (2024) | ≥32K | ~half models | Context < claimed |
 | BABILong (2024) | — | 10-20% utilization | Sharp decay with complexity |
 | Logic Haystacks (2026) | — | crumbles at 128 clauses | Realistic distractors hurt |
-| **Ours (2026)** | **1M** | **996K, 100% accuracy** | **No decay observed** |
+| **This repo (2026-11-01 JSON)** | **1M claimed** | **stored score 1.0; single-needle prompt_tokens UNKNOWN** | **no below-threshold cell in the saved grids** |
 
 ### 5.2 Why the Difference?
 
-1. **Model**: DeepSeek V4.1 Flash is a frontier reasoning model, possibly among the strongest for long context. Prior benchmarks tested models available at their time (GPT-3.5, LLaMA 2, etc.), which are weaker.
-2. **Task complexity**: We test all six RULER task types including cross-context reasoning (aggregation, multi-doc QA). The model handles all at 1M.
-3. **Methodological rigor**: We fix `max_tokens` (32→300) and use `prompt_tokens` for context length. Prior benchmarks may have underestimated performance due to these artifacts.
+1. **Model**: The saved files use two gateway ids for one DeepSeek v4.1 flash checkpoint, plus separate GLM files that are not a comparison. That is not a ranking against GPT-3.5 or LLaMA 2, and it is not evidence that this checkpoint is the strongest long-context model.
+2. **Task complexity**: The repo contains six task types. Stored scores on those grids are 1.0. Aggregation and multi-doc QA use the nvidia model id. Prompts and expected answers were not saved, so the scores were not rescored.
+3. **Methodological limit**: `max_tokens=32` can zero a reasoning model. The live CLI default is 300. `prompt_tokens` can be cited only when the JSON stores it. The single-needle matrix does not.
 
 ### 5.3 Limitations
 
@@ -180,7 +185,7 @@ Latency grows with context length, consistent with attention cost. But accuracy 
 
 ## 6. Conclusion
 
-We measured the effective context utilization of DeepSeek V4.1 Flash across all six RULER task types at up to 1M tokens. Contrary to the decay pattern reported in prior benchmarks, **the model maintains perfect accuracy (100%) across all task types and positions within its advertised 1M window**, with true context reaching 996K tokens. This suggests that frontier reasoning models may have substantially higher effective context utilization than earlier models, and that careful methodology (proper output budget, accurate token accounting, full task-complexity spectrum) is essential for valid long-context evaluation.
+The committed JSON stores score 1.0 on the six saved task grids, for one DeepSeek v4.1 flash checkpoint reached through two gateway ids. That is not a rescore and not a ranking against earlier models. Single-needle `prompt_tokens` are UNKNOWN. Results-schema rows at seq_len=1000000 span 996353–996506. `max_tokens=32` can manufacture a zero; the live CLI default is 300. The checked tally is the README claims block.
 
 ---
 

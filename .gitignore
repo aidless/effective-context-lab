@@ -21,6 +21,9 @@ env/
 
 # 测试/覆盖率
 .pytest_cache/
+
+# Offline mock fixtures are not measurements.
+artifacts/
 .coverage
 htmlcov/
 

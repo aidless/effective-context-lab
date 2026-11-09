@@ -27,6 +27,12 @@ class ModelClient:
     """模型声称的上下文窗口 (token)."""
     max_retries: int = 2
     retry_backoff: float = 1.0
+    oracle: bool = False
+    """Mock-only. When true, ``complete`` returns the primed expected answer.
+
+    This is a fixture switch for offline smoke tests. It is not a measurement
+    and it is ignored by ``OpenAICompatClient`` (that client never primes).
+    """
 
     def complete(
         self,
@@ -187,6 +193,10 @@ class MockClient(ModelClient):
         self.calls = 0
         self.last_prompt_len = 0
 
+    def prime_expected(self, expected: str) -> None:
+        """Store the probe's expected answer for oracle mode."""
+        self._primed_expected = expected
+
     def complete(
         self,
         prompt: str,
@@ -196,6 +206,10 @@ class MockClient(ModelClient):
     ) -> str:
         self.calls += 1
         self.last_prompt_len = len(prompt)
+
+        if self.oracle:
+            primed = getattr(self, "_primed_expected", None)
+            return primed if primed else "I don't know"
 
         # 从 prompt 中提取"期望答案" (探针格式: "What is X?" 期望 X 的 value)
         # 简单启发: 找 "is <expected>" 模式
