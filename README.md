@@ -1,5 +1,7 @@
 # Effective Context Lab — 长上下文有效利用率测量仪
 
+[![CI](https://github.com/aidless/effective-context-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/aidless/effective-context-lab/actions/workflows/ci.yml)
+
 > 实测「模型声称的上下文窗口」与「实际有效窗口」的差距，用可复现的 NIAH（Needle In A Haystack）探针。
 
 ## 背景：为什么需要这个
