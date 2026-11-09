@@ -131,7 +131,9 @@ def main():
                      [0.0, 0.25, 0.5, 0.75, 1.0])
 
     # 变量追踪热力图
-    d = load_latest("data/variable-tracking-*.json")
+    # Exclude variable-tracking-1m-*.json. sorted()[-1] on the wider glob
+    # is an accident of filenames, not a union of the two files.
+    d = load_latest("data/variable-tracking-20*.json")
     if d:
         plot_heatmap(d, "变量追踪准确率 (带时间戳)", f"{outdir}/heatmap-variable-tracking.png",
                      [4096, 65536, 262144, 524288, 1000000],

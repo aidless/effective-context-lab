@@ -1,5 +1,11 @@
 # 长上下文有效利用率测量报告（修正版）
 
+> **Provenance (2026-11-09). STATUS: WORK-IN-PROGRESS — not A yet.**
+> Stored accuracy cells below are an OBSERVED transcription of `accuracy` / `score` in `data/*.json`. They are not a rescore: expected answers are not in those files.
+> `prompt_tokens` for `data/1m-full-matrix-20261101-185523.json` is **UNKNOWN** (field absent). Do not read a token count from another file as the single-needle length.
+> OBSERVED `avg_latency_ms` at seq_len=1000000 in that file is 22194.019 to 54961.303. Earlier "5-28s" wording does not match the file.
+> Variable tracking is two model ids (22 rows `opencode-go/deepseek-v4.1-flash` with every `latency_ms` 0, plus 3 rows `nvidia/deepseek-ai/deepseek-v4.1-flash`). Aggregation and multi-doc QA use the nvidia id. The checked tally is the README claims block.
+
 **测量对象**: `opencode-go/deepseek-v4.1-flash`（Magpie 网关, 声称 1,000,000 tokens 上下文窗口）
 **测量方法**: NIAH（Needle In A Haystack）式单针探针
 **测量时间**: 2026-11-01（修正版, max_tokens=300）
@@ -12,7 +18,7 @@
 > **在修正后的测量下，`deepseek-v4.1-flash` 在真实 1M 上下文窗口内，所有位置（最前/中间/最末）都能正确检索单针信息。**
 >
 > 具体：131K 完整矩阵（30 cells）**全部 1.00**；262K/524K/1M 各 5 位置**全部 1.00**。
-> 1M 探针真实到达 `prompt_tokens=996,354`（占声称 1M 的 99.6%），仍全部正确。
+> Single-needle `prompt_tokens` are UNKNOWN on `data/1m-full-matrix-20261101-185523.json`. Stored accuracy on that file is 50/50 cases (25 cells × n_cases 2, every stored accuracy 1).
 
 **这挑战了初版「有效窗口仅 1.6%-13.1%」的结论**——那个结论是 `max_tokens=32` 的测量伪影，不是模型真实能力。
 
@@ -29,11 +35,11 @@
 
 ## 三、深度扩展（max_tokens=300）
 
-| seq_len | 位置覆盖 | 全部得分 | 真实 prompt_tokens | 延迟范围 |
-|---------|---------|---------|-------------------|---------|
-| 262,144 | 5 位置全测 | 全部 1.00 | ~261,229 | 3-10s |
-| 524,288 | 5 位置全测 | 全部 1.00 | ~520,000 | 4-14s |
-| 1,000,000 | 5 位置全测 | 全部 1.00 | 996,354 | 5-28s |
+| seq_len | 位置覆盖 | 全部得分 | prompt_tokens | avg_latency_ms (OBSERVED in the 1M matrix file) |
+|---------|---------|---------|-------------------|------------------------------------------------|
+| 262,144 | 5 位置全测 | 全部 1.00 | UNKNOWN | 6640.930 to 10908.586 |
+| 524,288 | 5 位置全测 | 全部 1.00 | UNKNOWN | 14658.471 to 33676.511 |
+| 1,000,000 | 5 位置全测 | 全部 1.00 | UNKNOWN | 22194.019 to 54961.303 |
 
 ## 三b、1M 完整矩阵确认（25 cells, 2 重复/格 = 50 次测量）
 
@@ -45,23 +51,23 @@
 | 524,288 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
 | 1,000,000 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
 
-**25 cells 全部 1.00（2 重复/格 = 50 次测量）**，结论稳健。1M 探针真实 `prompt_tokens=996,354`（占声称 99.6%），`finish_reason=stop`。
+**25 cells 全部 stored accuracy 1.00（2 重复/格 = 50 cases）** in `data/1m-full-matrix-20261101-185523.json`. `prompt_tokens` and `finish_reason` are UNKNOWN in that file.
 
 ## 四、有效窗口汇总（修正后）
 
 | 针位置 | 有效窗口 (tokens) | 声称窗口 | 效率比 |
 |--------|------------------|---------|--------|
-| 0.0 (最前) | ≥1,000,000 | 1,000,000 | **≥99.6%** |
-| 0.5 (中间) | ≥1,000,000 | 1,000,000 | **≥99.6%** |
-| 1.0 (最末) | ≥1,000,000 | 1,000,000 | **≥99.6%** |
+| 0.0 (最前) | 1000000 (max probed seq_len with stored accuracy 1) | 1000000 (flag, not read from the gateway) | prompt_tokens ratio UNKNOWN |
+| 0.5 (中间) | 1000000 (max probed seq_len with stored accuracy 1) | 1000000 (flag, not read from the gateway) | prompt_tokens ratio UNKNOWN |
+| 1.0 (最末) | 1000000 (max probed seq_len with stored accuracy 1) | 1000000 (flag, not read from the gateway) | prompt_tokens ratio UNKNOWN |
 
 > 注：1M 是测量上限（声称窗口）。实际有效窗口可能 >1M，但当前测量未覆盖 >1M。
 
 ## 五、关键测量方法发现
 
 1. **reasoning 模型需要足够的 `max_tokens`**：DeepSeek v4.1-flash 是 reasoning 模型，`finish_reason=length` + `reasoning_tokens=32` 说明 32 token 全被 reasoning 占满 → content 为空。`max_tokens=300` 解决（content='Paris'，correct=True）。
-2. **真实上下文长度以 `prompt_tokens` 为准**：探针生成时用空白切分估长度，但真实 tokenizer 分词更多（膨胀率 1.26）。修正后探针实际到达的上下文长度 = `prompt_tokens`（1M 探针实际 996,354），**不是**空白切分的 793,661。
-3. **token 膨胀率校正有效**：生成时目标 = seq_len/1.26，实际 prompt_tokens ≈ seq_len（1M 探针 996,354 ≈ 1M，ratio 0.996）。
+2. **真实上下文长度以 `prompt_tokens` 为准，前提是文件里有这个字段**。生成器用空白切分，并除以代码常量 `TOKEN_EXPANSION_RATIO = 1.26`。单针 1M 矩阵 JSON 没有 `prompt_tokens`（UNKNOWN）。带该字段的 results 文件在 seq_len=1000000 上的范围是 996353–996506（README claims block）。空白切分长度不是 API token 数。
+3. **不要把另一个文件的 token 数抄到单针矩阵上**。results 文件里的 1M `prompt_tokens` 最大值是 996506（`data/multi-doc-qa-20261101-225024.json`）。
 
 ## 六、与文献对比（修正后视角）
 
@@ -69,7 +75,7 @@
 |------|---------|------|------|
 | RULER (arXiv:2404.06654) | ≥32K | 约一半模型达标 | 长上下文能力 < 声称 |
 | RULER v2 (Qwen3-235B) | 1M | 8K=87.3% → 1M=36.1% | 随长度递减 |
-| **本测量 (deepseek-v4.1-flash)** | 1M | **1M 内全位置正确** | **本模型在 1M 内表现优秀** |
+| **本测量 (stored scores, 2026-11-01)** | 1M flag | **saved single-needle cells are stored accuracy 1.0; prompt_tokens UNKNOWN** | **one checkpoint, not a ranking** |
 
 > 注意：本测量用单针 NIAH，比 RULER 完整任务集（多针/多项选择/多文档）更简单。**RULER 完整任务集下可能看到衰减**——这是下一步测量方向。
 
@@ -127,7 +133,7 @@ python3 scripts/run_benchmark.py --model opencode-go/deepseek-v4.1-flash --repea
 | 524,288 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
 | 1,000,000 | 1.00 | 1.00 | 1.00 | 1.00 | 1.00 |
 
-**25/25 全部 1.00**（数据: `data/variable-tracking-*.json`）。模型在 1M 内能按时间戳追踪变量。
+**Stored scores 22/22 + 3/3 = 25/25, two model ids**（`data/variable-tracking-20261101-200943.json` is `opencode-go/deepseek-v4.1-flash` and every `latency_ms` is 0; `data/variable-tracking-1m-20261101-215955.json` is `nvidia/deepseek-ai/deepseek-v4.1-flash`). Key overlap is 0. This is not one endpoint.
 
 ### 8.4 聚合（Aggregation, 需跨上下文求和）
 
@@ -166,7 +172,7 @@ python3 scripts/run_benchmark.py --model opencode-go/deepseek-v4.1-flash --repea
 | 聚合（Aggregation） | 跨上下文求和 | 全部正确 |
 | 多文档问答（Multi-doc QA） | 跨文档定位 | 全部正确 |
 
-> **结论**：deepseek-v4.1-flash 在真实 1M 上下文（prompt_tokens≈996K）内对**全部 6 类 RULER 任务**（检索/追踪/求和/跨文档）均保持全部正确。**尚未观察到有效窗口衰减**——模型在所有测过的任务复杂度内都保持能力。真正的瓶颈可能出现在 >1M 长度、更高信息密度或更复杂的推理任务上。
+> **结论（stored scores only）**：上表各格的 stored score 为 1.0。这不是重算，也不是单一 model id。聚合与多文档问答、以及变量追踪的 3 个 1M 补点，model id 是 `nvidia/deepseek-ai/deepseek-v4.1-flash`；其余多数文件是 `opencode-go/deepseek-v4.1-flash`。单针矩阵没有 `prompt_tokens`。results 文件在 seq_len=1000000 上的 `prompt_tokens` 范围是 996353–996506。网格内没有低于 0.856 的格子，所以这些文件没有给出衰减边界。更长、更密或换针的任务没有在这里重跑。
 
 
 ---
@@ -190,10 +196,10 @@ python3 scripts/run_benchmark.py --model opencode-go/deepseek-v4.1-flash --repea
 | RULER (arXiv:2404.06654) | 声称 ≥32K 仅约一半达标 |
 | BABILong (arXiv:2406.10149) | LLM 有效利用仅 10-20% 上下文 |
 | Logic Haystacks (arXiv:2502.17169) | 真实干扰物下 128 句即崩 |
-| **本项目** | **DeepSeek v4.1 flash 在 1M 内 6 类任务全对，未观察到衰减** |
+| **本项目** | **stored score 1.0 on the saved grids; two model ids; not rescored** |
 
 ### 9.3 差异原因
 
-1. **测量对象**：本项目用 Magpie 网关 `opencode-go/deepseek-v4.1-flash`（声称 1M），非开源模型权重。DeepSeek v4.1 flash 可能是当前长上下文能力最强的模型之一。
+1. **测量对象**：主文件里有两个 gateway model id，GLM 文件是另一个模型。这不是「当前最强」的排序。
 2. **测量方法**：本项目用可控位置（0.0/0.25/0.5/0.75/1.0）× 长度（65K-1M）的探针矩阵，6 类任务。
-3. **真实上下文长度**：用 `prompt_tokens` 校正（1M 探针真实 996,354，占声称 99.6%），避免「声称 1M 实际 793K」的口径误差。
+3. **真实上下文长度**：只在 JSON 含 `prompt_tokens` 时才能引用。单针矩阵该字段为 UNKNOWN。results 文件的 1M 范围见 README claims block。

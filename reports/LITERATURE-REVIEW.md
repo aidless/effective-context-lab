@@ -141,7 +141,7 @@ NIAH 类合成任务被批评为「太不真实」。第二代基准改用真实
 | 上下文长度 | ≤1M | ≤100K+ | ≤100K+ | ≤2M 词 | ~25K tokens | **≤1M** |
 | 任务类型 | 13 类 | 4 类 | 20 类 | 6 类 | 矛盾检测 | **6 类** |
 | 模型权重 | 可访问 | 可访问 | 可访问 | 可访问 | 可访问 | **API 网关（不可访问）** |
-| 主要结论 | 约一半达标 | — | 10-20% 利用 | 专家 53.7% | 128 句崩溃 | **1M 内 6 类全对** |
+| 主要结论 | 约一半达标 | — | 10-20% 利用 | 专家 53.7% | 128 句崩溃 | **stored score 1.0 on saved grids (see README claims block)** |
 
 ### 核心发现对比
 
@@ -150,13 +150,13 @@ NIAH 类合成任务被批评为「太不真实」。第二代基准改用真实
 | RULER | 几乎所有模型随长度大幅下降 |
 | BABILong | LLM 有效利用仅 10-20% 上下文 |
 | Logic Haystacks | 真实干扰物下 128 句即崩 |
-| **本项目** | **DeepSeek v4.1 flash 在 1M 内 6 类任务全对，未观察到衰减** |
+| **本项目** | **stored score 1.0 on the saved grids; two gateway ids; not rescored; not a ranking** |
 
 ### 为什么本项目的发现不同
 
-1. **测量对象不同**：本项目用 Magpie 网关的 `opencode-go/deepseek-v4.1-flash`（声称 1M），非开源模型权重。DeepSeek v4.1 flash 可能是当前长上下文能力最强的模型之一。
+1. **测量对象不同**：文件里的 model id 有 `opencode-go/deepseek-v4.1-flash` 和 `nvidia/deepseek-ai/deepseek-v4.1-flash`，另有未纳入主表的 `volcengine/glm-5.3-flash`。这不是「当前最强」的排序。
 2. **测量方法差异**：本项目用可控位置/密度的 NIAH 式探针（6 类任务），RULER 用固定任务集。本项目探针可精确控制针在干草堆中的位置（0.0/0.25/0.5/0.75/1.0）。
-3. **真实上下文长度**：本项目用 `prompt_tokens` 校正（1M 探针真实 996,354，占声称 99.6%），避免「声称 1M 实际 793K」的口径误差。
+3. **真实上下文长度**：只在 JSON 含 `prompt_tokens` 时引用该字段。单针 1M 矩阵没有这个字段（UNKNOWN）。带该字段的 results 文件在 seq_len=1000000 上的范围见 README claims block（996353–996506）。空白切分长度不是 API token 数。
 
 ---
 

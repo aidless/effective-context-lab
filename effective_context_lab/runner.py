@@ -170,6 +170,10 @@ def run_probe(
         f"Question: {case.question}\n"
         f"Answer (one word):"
     )
+    if getattr(client, "oracle", False):
+        primer = getattr(client, "prime_expected", None)
+        if callable(primer):
+            primer(case.expected)
     t0 = time.time()
     resp = client.complete_full(
         prompt,
@@ -178,14 +182,17 @@ def run_probe(
     )
     latency_ms = (time.time() - t0) * 1000.0
     prediction = resp["content"]
-    prompt_tokens = resp.get("prompt_tokens", 0) or case.actual_len
+    # 0 means the client did not report usage. Do not substitute the
+    # whitespace length: that number is not an API prompt_tokens count.
+    reported_tokens = resp.get("prompt_tokens") or 0
+    prompt_tokens = int(reported_tokens)
     score = is_correct(prediction, case.expected, method="exact_match")
     return {
         "score": score,
         "prediction": prediction,
         "expected": case.expected,
         "latency_ms": latency_ms,
-        "actual_len": prompt_tokens,
+        "actual_len": case.actual_len,
         "prompt_tokens": prompt_tokens,
         "finish_reason": resp.get("finish_reason"),
         "needle_positions": case.needle_positions,
