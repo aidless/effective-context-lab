@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/aidless/effective-context-lab/actions/workflows/ci.yml/badge.svg)](https://github.com/aidless/effective-context-lab/actions/workflows/ci.yml)
 
+> **English TL;DR**: A measurement lab for the gap between a model's claimed and actually effective context window, using reproducible NIAH probes covering six RULER-style tasks (single/multi-needle retrieval, multi-choice, variable tracking, aggregation, multi-doc QA) against OpenAI-compatible endpoints. Run `python3 scripts/run_benchmark.py`; 44 tests cover probes, scoring, and the runner. On the one model measured (deepseek-v4.1-flash, claimed 1M), all six tasks were fully correct within 1M and no decay was observed — a single-model boundary.
+
 > 实测「模型声称的上下文窗口」与「实际有效窗口」的差距，用可复现的 NIAH（Needle In A Haystack）探针。
 
 ## 背景：为什么需要这个
