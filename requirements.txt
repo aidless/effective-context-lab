@@ -1,6 +1,6 @@
 # effective-context-lab — runtime + test dependencies
 # The effective_context_lab package itself is stdlib-only (urllib.request for the
 # OpenAI-compatible client). These are needed by the scripts and the test suite.
-matplotlib>=3.7
+matplotlib>=3.11.2
 numpy>=1.24
 pytest>=7.4
