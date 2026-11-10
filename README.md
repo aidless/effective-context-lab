@@ -32,6 +32,23 @@
 
 > **全部 6 类 RULER 任务（含跨上下文推理的聚合/多文档问答）在 1M 内全部正确**——尚未观察到有效窗口衰减。真正的瓶颈可能出现在 >1M 长度、更高信息密度或更复杂的推理任务上。
 
+## 结果可视化
+
+以下各图均由 `scripts/plot_results.py` 从 `data/*.json` 原始 cells 生成（汇总全对，
+热力图上所有格子都是 1.0——这正是「1M 内无衰减」的直观形态）：
+
+![单针 1M 完整矩阵准确率热力图](reports/figures/heatmap-1m.png)
+
+| | |
+|---|---|
+| ![多针检索](reports/figures/heatmap-multineedle.png) | ![多项选择](reports/figures/heatmap-multichoice.png) |
+| ![变量追踪](reports/figures/heatmap-variable-tracking.png) | ![聚合](reports/figures/heatmap-aggregation.png) |
+| ![多文档问答](reports/figures/heatmap-multi_doc_qa.png) | ![延迟曲线](reports/figures/latency.png) |
+
+> `reports/figures/` 内共 7 张已提交的图。`plot_results.py` 当前有 4 个热力图分支 +
+> 延迟曲线（共 5 张）；聚合与多文档问答两张热力图由同一份数据生成、已随仓库提交，
+> 脚本里的对应生成分支尚未合入（重跑 `plot_results.py` 不会覆盖这两张）。
+
 ## 安装与使用
 
 ### 依赖
@@ -82,7 +99,8 @@ python3 scripts/plot_results.py
 
 输出：`reports/figures/*.png`（准确率热力图 + 延迟曲线）。当前脚本生成 5 张：
 `heatmap-1m` / `heatmap-multineedle` / `heatmap-multichoice` / `heatmap-variable-tracking` / `latency`；
-`aggregation` 与 `multi-doc-qa` 的热力图脚本里暂无对应分支，仓内也无这两张图。
+聚合与多文档问答的热力图脚本里暂无对应分支，但两张图已从同一份数据生成并随仓库提交
+（见上方「结果可视化」，共 7 张图在 `reports/figures/`）。
 
 ## 项目结构
 
