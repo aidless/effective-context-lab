@@ -1,0 +1,129 @@
+{
+ "total": 20,
+ "passed": 20,
+ "failed": 0,
+ "selftest": false,
+ "failed_by_axis": {},
+ "results": [
+  {
+   "id": "EC-01",
+   "axis": "scoring/exact",
+   "ok": true,
+   "detail": "1.0"
+  },
+  {
+   "id": "EC-02",
+   "axis": "scoring/exact",
+   "ok": true,
+   "detail": "0.0"
+  },
+  {
+   "id": "EC-03",
+   "axis": "scoring/f1",
+   "ok": true,
+   "detail": "0.4"
+  },
+  {
+   "id": "EC-04",
+   "axis": "scoring/f1",
+   "ok": true,
+   "detail": "0.0"
+  },
+  {
+   "id": "EC-05",
+   "axis": "scoring/normalize",
+   "ok": true,
+   "detail": "hello world"
+  },
+  {
+   "id": "EC-06",
+   "axis": "scoring/multi",
+   "ok": true,
+   "detail": "1.0"
+  },
+  {
+   "id": "EC-07",
+   "axis": "scoring/raises",
+   "ok": true,
+   "detail": "raised ValueError"
+  },
+  {
+   "id": "EC-08",
+   "axis": "probes/position",
+   "ok": true,
+   "detail": "500"
+  },
+  {
+   "id": "EC-09",
+   "axis": "probes/position",
+   "ok": true,
+   "detail": "8"
+  },
+  {
+   "id": "EC-10",
+   "axis": "probes/position",
+   "ok": true,
+   "detail": "raised ValueError"
+  },
+  {
+   "id": "EC-11",
+   "axis": "probes/tokenizer",
+   "ok": true,
+   "detail": "1000"
+  },
+  {
+   "id": "EC-12",
+   "axis": "probes/needle",
+   "ok": true,
+   "detail": "794"
+  },
+  {
+   "id": "EC-13",
+   "axis": "probes/needle",
+   "ok": true,
+   "detail": "3"
+  },
+  {
+   "id": "EC-14",
+   "axis": "probes/tasks",
+   "ok": true,
+   "detail": "468"
+  },
+  {
+   "id": "EC-15",
+   "axis": "probes/tasks",
+   "ok": true,
+   "detail": "311"
+  },
+  {
+   "id": "EC-16",
+   "axis": "runner/cells",
+   "ok": true,
+   "detail": "4000"
+  },
+  {
+   "id": "EC-17",
+   "axis": "runner/cells",
+   "ok": true,
+   "detail": "0.9765625"
+  },
+  {
+   "id": "EC-18",
+   "axis": "runner/bench",
+   "ok": true,
+   "detail": "0.0"
+  },
+  {
+   "id": "EC-19",
+   "axis": "data/matrix",
+   "ok": true,
+   "detail": "50"
+  },
+  {
+   "id": "EC-20",
+   "axis": "data/results",
+   "ok": true,
+   "detail": "996419"
+  }
+ ]
+}

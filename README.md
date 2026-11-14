@@ -196,3 +196,63 @@ python3 scripts/run_benchmark.py --task multi_doc_qa    --seq-lens 65536 262144 
 **数据**：`data/` 下 13 个 JSON 全部为实测数据（含 4 个失败/被取代的 run，见上文「复现」一节的区分）。逐文件的生成命令见上文「复现」一节。
 
 **Zotero 文献库**：10 篇长上下文基准论文已入库（collection「长上下文基准文献」），详见 `reports/LITERATURE-REVIEW.md`。
+
+## 验收标准与复算
+
+**判据**：本仓判为合格的条件是 `python3 eval/run_cases.py` 通过率必须为 100%（20/20），且 `make eval` 退出码必须为 0；任何一条失败即判为不合格。
+
+### 题库 `eval/cases.jsonl`（20 条七键题库）
+
+每条 case 带 `id/axis/question/expected/mode/verify/source` 七键；`mode=expr|raises|doc`。
+`expr`/`raises` 的 `verify` 是真调用本仓 API 或真解析本仓 `data/*.json` 的代码，`expected` 是**现算**出来的值（不是抄文档），改一行实现就会变红。
+
+| axis | 条数 | 覆盖对象 | 来源 |
+|------|------|----------|------|
+| `scoring/exact` | 2 | 归一化后的精确匹配（大小写/标点、实体多余） | `effective_context_lab/scoring.py:24` |
+| `scoring/f1` | 2 | token 级 F1（部分召回、空预测） | `effective_context_lab/scoring.py:29` |
+| `scoring/normalize` | 1 | `_normalize` 小写 + 去标点 + 合并空白 | `effective_context_lab/scoring.py:15` |
+| `scoring/multi` | 1 | 多项选择命中判定 | `effective_context_lab/scoring.py:53` |
+| `scoring/raises` | 1 | 未知评分方法 `is_correct(..., "bleu")` 必须抛 `ValueError` | `effective_context_lab/scoring.py:72` |
+| `probes/position` | 3 | 针位置映射、末位夹紧、越界拒绝 | `effective_context_lab/probes.py:90` |
+| `probes/tokenizer` | 1 | 1.26 token 膨胀率校正 | `effective_context_lab/probes.py:82` |
+| `probes/needle` | 2 | 单针实际长度、多针条数 | `effective_context_lab/probes.py:115` |
+| `probes/tasks` | 2 | 变量追踪期望值、聚合求和期望值 | `effective_context_lab/probes.py:306` |
+| `runner/cells` | 2 | 有效窗口（阈值 0.856）、effective/claimed 比值 | `effective_context_lab/runner.py:85` |
+| `runner/bench` | 1 | `run_benchmark` 端到端单格（MockClient） | `effective_context_lab/runner.py:195` |
+| `data/matrix` | 1 | `data/1m-full-matrix-*.json` 的 `n_cases` 总和 | `data/1m-full-matrix-20261101-185523.json` |
+| `data/results` | 1 | `data/variable-tracking-1m-*.json` 首条 `prompt_tokens` | `data/variable-tracking-1m-20261101-215955.json` |
+
+### 三条命令
+
+```bash
+python3 eval/run_cases.py            # 逐条跑题库，末行必须是 20/20 cases passed（退出码 0）
+python3 eval/run_cases.py --selftest # 反证：把 EC-01 的期望改成不可能值，必须变红（19/20，退出码 0）
+make eval                            # 一键重跑：题库 + 既有 44 项 pytest，退出码必须为 0
+```
+
+`--selftest` 变红是**期望行为**：它证明这套题库不是装饰（对应 AGENTS.md 第 8/21/37 条），因此它自身仍以 0 退出。
+
+### 复算
+
+- 每题的 `verify` 字段**就是**复算代码：`python3 eval/run_cases.py --json` 可看到逐条 `detail`（实算值）。
+- `python3 eval/run_cases.py --save` 重建 `eval/run-report.json`（含 `total/passed/failed/failed_by_axis/results`），与仓库内已提交的那份逐字段可比：`total` 必须为 20、`passed` 必须为 20、`failed_by_axis` 必须为空对象。
+- 数据类两题（`data/matrix`、`data/results`）直接读 `data/*.json`，重算不依赖任何手抄数字；README「核心结论」里的 50/20/25/20 等计数即由同一批文件得出。
+- 题目本身不联网、不调模型：全部为本地纯计算，单次全跑 < 1 s。
+
+### 失败归因
+
+`run_cases.py` 失败时**不只报一个 pass_rate**，而是按 `axis` 汇总失败 id（这是本仓的失败分类口径：axis 即失败类型——评分器、探针、运行器、数据产物四类）：
+
+```
+[FAIL] EC-15 probes/tasks: 305
+[FAIL] EC-18 runner/bench: raised AttributeError: ...
+[FAIL] EC-20 data/results: 未命中
+
+18/20 cases passed
+失败归因（按 axis）：
+  probes/tasks: 1 条 —— EC-15
+  runner/bench: 1 条 —— EC-18
+  data/results: 1 条 —— EC-20
+```
+
+按 axis 的处置路径：`scoring/*` 失败 → 评分口径变了；`probes/*` 失败 → 探针生成或位置/长度口径变了；`runner/*` 失败 → 有效窗口/链路行为变了；`data/*` 失败 → 落盘产物被替换或改写。
