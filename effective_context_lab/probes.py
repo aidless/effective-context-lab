@@ -14,7 +14,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Literal
 
 # RULER 阈值惯例: 以 Llama-2-7B@4K 的 85.6% 作为合格线
@@ -185,13 +185,13 @@ def generate_needle_in_haystack(config: NIAHConfig) -> tuple[str, list[Needle], 
         # 针: 问聚合结果
         if config.aggregation_op == "sum":
             target = sum(values)
-            needle_desc = f"the sum of all item values"
+            needle_desc = "the sum of all item values"
         elif config.aggregation_op == "avg":
             target = round(sum(values) / len(values), 2)
-            needle_desc = f"the average of all item values"
+            needle_desc = "the average of all item values"
         else:  # count
             target = len(values)
-            needle_desc = f"the count of all items"
+            needle_desc = "the count of all items"
         n = Needle(subject=needle_desc, value=str(target))
         needles.append(n)
         needle_texts.extend(fact_texts)

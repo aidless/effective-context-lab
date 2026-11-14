@@ -12,7 +12,6 @@
 """
 
 import argparse
-import json
 import os
 import sys
 import time
@@ -71,7 +70,7 @@ def main():
         len(args.seq_lens) * len(args.positions) * args.repeats
     )
     print(f"模型: {args.model}")
-    print(f"声称窗口: 1,000,000 tokens")
+    print("声称窗口: 1,000,000 tokens")
     print(f"任务: {args.task}")
     print(f"扫描: {len(args.seq_lens)} 长度 × {len(args.positions)} 位置 × {args.repeats} 重复")
     print(f"总探针数: {total_cases}")
@@ -163,7 +162,7 @@ def write_report(result, slug, ts):
         f"- **最佳位置的有效窗口/声称窗口 = {best_ratio:.1%}**"
     )
     lines.append(
-        f"- 若有效窗口 << 声称窗口, 印证「窗口大 ≠ 能用窗口」(RULER 结论)."
+        "- 若有效窗口 << 声称窗口, 印证「窗口大 ≠ 能用窗口」(RULER 结论)."
     )
     lines.append("")
     lines.append("## 复现")

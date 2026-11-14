@@ -1,6 +1,5 @@
 """Runner 测试 (用 MockClient, 不烧真实 API)."""
 
-import pytest
 
 from effective_context_lab.clients import MockClient
 from effective_context_lab.runner import (

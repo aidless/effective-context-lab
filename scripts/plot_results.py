@@ -3,7 +3,6 @@ import json
 import glob
 import os
 import statistics
-import sys
 
 import matplotlib
 matplotlib.use("Agg")
